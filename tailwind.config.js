@@ -2,10 +2,16 @@ module.exports = {
   purge: ['./public/**/*.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {        
+        'front': "url('~@/assets/front.jpg')",
+        'back': "url('~@/assets/back.jpg')"
+      }
+    },
   },
   variants: {
-    extend: {},
+    extend: {
+    },
     backgroundColor: ({ after }) => after(['disabled'])
   },
   plugins: [],
