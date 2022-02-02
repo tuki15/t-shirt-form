@@ -1,35 +1,35 @@
 <template>
     <div>
-        <h1>Address</h1>
-        <Form @submit="submit" :validation-schema="schema">
-            <Field name="name" label ="Imię" placeholder="Imię"/>
+        <h1 class="text-2xl font-bold text-center mb-8">Dane zamawiającego</h1>
+        <Form @submit="submit" :validation-schema="schema" class="flex flex-col items-center">
+            <Field name="name" label ="Imię" placeholder="Imię" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="name" />
 
-            <Field name="surname" label="Nazwisko" placeholder="Nazwisko"/>
+            <Field name="surname" label="Nazwisko" placeholder="Nazwisko" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="surname" />
 
-            <Field name="street" label="Ulica" placeholder="Ulica"/>
+            <Field name="street" label="Ulica" placeholder="Ulica" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="street" />
 
-            <Field name="streetNo" label="Nr budynku" placeholder="Nr budynku"/>
+            <Field name="streetNo" label="Nr budynku" placeholder="Nr budynku" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="streetNo" />
 
-            <Field name="flatNo" label="Nr mieszkania" placeholder="Nr mieszkania"/>
+            <Field name="flatNo" label="Nr mieszkania" placeholder="Nr mieszkania" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="flatNo" />
 
-            <Field name="postalCode" label="Kod pocztowy" placeholder="Kod pocztowy"/>
+            <Field name="postalCode" label="Kod pocztowy" placeholder="Kod pocztowy" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="postalCode" />
 
-            <Field name="city" label="Miasto" placeholder="Miasto"/>
+            <Field name="city" label="Miasto" placeholder="Miasto" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="city" />
 
-            <Field name="phone" label="Telefon" placeholder="Telefon"/>
+            <Field name="phone" label="Telefon" placeholder="Telefon" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="phone" />
 
-            <Field name="email" label="Adres e-mail" placeholder="Adres e-mail"/>
+            <Field name="email" label="Adres e-mail" placeholder="Adres e-mail" class="border rounded py-1 px-2 mb-2"/>
             <ErrorMessage name="email" />
             
-            <button>Wyślij</button>
+            <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100">Wyślij</button>
         </Form>  
 
     </div>
@@ -88,20 +88,9 @@ export default {
         ErrorMessage
     },
     methods: {
-        // Validator function
-        isRequired(value) {
-        return value ? true : 'To pole jest wymagane';
+        submit(values) {
+            alert(JSON.stringify(values, null, 2));
         },
     }
 }
 </script>
-<style>
-    form{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    input{
-        width: 200px;
-    }
-</style>

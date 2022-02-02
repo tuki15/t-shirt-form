@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>Preview</h1>
-        <img :src="src" :alt="alt">
+        <img class="rounded w-48" :src="src" :alt="alt">
     </div>
 </template>
 

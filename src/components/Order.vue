@@ -1,17 +1,21 @@
 <template>
-    <div>
-        <div>
-            <preview :src='src !="" ? src : src = src = ""' :alt="alt" @previmg="prevImg()"/>
+    <div class="container mx-auto">
+        <div class="bg-white flex flex-wrap mx-auto p-12 border-1 rounded-lg shadow-md w-4/5">
+            <div class="w-1/2">
+                <preview :src='src !="" ? src : src = src = ""' :alt="alt" @previmg="prevImg()"/>
+            </div>
+            <div class="w-1/2">
+                <form>
+                    <keep-alive>
+                        <component :is="view" :step="step" :preview="src"/>
+                    </keep-alive>
+                </form>  
+            </div>
+            <div class="flex justify-between pt-8 w-full">
+                <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(-1)" :disabled="this.step === 0">Wstecz</button>
+                <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(1)" :disabled="this.step === 4">Dalej</button>
+            </div>
         </div>
-        <div>
-            <form>
-                <keep-alive>
-                    <component :is="view" :step="step" :preview="src"/>
-                </keep-alive>
-            </form>  
-        </div>
-        <button @click.prevent="changeStep(-1)" :disabled="this.step === 0">Wstecz</button>
-        <button @click.prevent="changeStep(1)" :disabled="this.step === 4">Dalej</button>
     </div>
 </template>
 
@@ -64,7 +68,7 @@ export default {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         },
         drawImage() {
-            let img = "https://picsum.photos/id/"+ this.getRandomIntInclusive(1,1000) +"/200";
+            let img = "https://picsum.photos/id/"+ this.getRandomIntInclusive(1,1000) +"/400";
             this.$root.$emit("src", img);
             return img;
         },

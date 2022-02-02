@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <h1>Wybierz miejsce nadruku</h1>
+    <div class="text-center">
+        <h1 class="text-2xl font-bold mb-8">Wybierz miejsce nadruku</h1>
         <select name="side" @change="sideChange">
             <option>Przód</option>
             <option>Tył</option>
