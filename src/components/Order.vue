@@ -12,8 +12,8 @@
                 </form>  
             </div>
             <div class="flex justify-between pt-8 w-full">
-                <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(-1)" :disabled="this.step === 0">Wstecz</button>
-                <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(1)" :disabled="this.step === 4">Dalej</button>
+                <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(-1); this.disableNext = false;" :disabled="this.step === 0">Wstecz</button>
+                <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(1)" :disabled="this.step === 4" type="submit">Dalej</button>
             </div>
         </div>
     </div>
@@ -35,7 +35,8 @@ export default {
             src: "",
             src1: "",
             src2: "",
-            alt: "Przód"
+            alt: "Przód",
+            isFormValid: false
         }
     },
     components: {
@@ -46,18 +47,35 @@ export default {
     },
     methods: {
         changeView() {
-            if(this.step === 0){
+            if(this.step === 0) {
                 this.view = "side-picker"
-            }else if(this.step === 1){
+            } else if(this.step === 1) {
                 this.view = "image-picker"
-            }else if(this.step === 2){
+            } else if(this.step === 2) {
                 this.view = "address-form"
+                this.eventBus.emit("enableForm");
+            } else if(this.step === 3) {
+                this.eventBus.emit("disableForm");  
             }
         },
         changeStep(dir) {
-            this.step += dir;
-            console.log(this.step);
-            this.changeView();
+            if(this.step === 2){
+                this.eventBus.emit("submit");
+
+                setTimeout(() => {
+                    if(this.isFormValid === false){
+                        console.log("disabled");
+                    } else {
+                        this.step++;
+                        console.log(this.step);
+                        this.changeView();
+                    }
+                }, 100);
+            } else {
+                this.step += dir;
+                this.changeView();
+                console.log(this.step);
+            }           
         },
         changeSide(side) {
             this.alt = side;
@@ -69,7 +87,7 @@ export default {
         },
         drawImage() {
             let img = "https://picsum.photos/id/"+ this.getRandomIntInclusive(1,1000) +"/400";
-            this.$root.$emit("src", img);
+            this.eventBus.emit("src", img);
             return img;
         },
         prevImg() {
@@ -82,6 +100,12 @@ export default {
         },
         nextImg() {
             this.src = this.src2;
+        },
+        formInvalid() {
+            this.isFormValid = false;
+        },
+        formValid() {
+            this.isFormValid = true;
         }
     },
     mounted() {
@@ -90,6 +114,8 @@ export default {
         this.eventBus.on("prev-img", this.prevImg);
         this.eventBus.on("draw-next-img", this.drawNextImg)
         this.eventBus.on("next-img", this.nextImg)
+        this.eventBus.on("invalidForm", this.formInvalid);
+        this.eventBus.on("validForm", this.formValid);
     }
 }
 </script>

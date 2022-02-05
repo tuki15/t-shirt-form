@@ -1,37 +1,118 @@
 <template>
     <div>
-        <h1 class="text-2xl font-bold text-center mb-8">Dane zamawiającego</h1>
-        <Form @submit="submit" :validation-schema="schema" class="flex flex-col items-center">
-            <Field name="name" label ="Imię" placeholder="Imię" class="border rounded py-1 px-2 mb-2"/>
+        <h1 class="text-2xl font-bold text-center mb-8">{{ heading }}</h1>
+        <Form @submit="submitForm" @invalid-submit="onInvalidSubmit" :validation-schema="schema" class="flex flex-col items-center">
+
+            <Field 
+                name="name" 
+                label ="Imię" 
+                placeholder="Imię" 
+                class="border rounded py-1 px-2 mb-2" 
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'
+            />
             <ErrorMessage name="name" />
 
-            <Field name="surname" label="Nazwisko" placeholder="Nazwisko" class="border rounded py-1 px-2 mb-2"/>
+            <Field 
+                name="surname" 
+                label="Nazwisko" 
+                placeholder="Nazwisko" 
+                class="border rounded py-1 px-2 mb-2" 
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'    
+            />
             <ErrorMessage name="surname" />
 
-            <Field name="street" label="Ulica" placeholder="Ulica" class="border rounded py-1 px-2 mb-2"/>
+            <Field 
+                name="street" 
+                label="Ulica" 
+                placeholder="Ulica" 
+                class="border rounded py-1 px-2 mb-2"
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'
+            />
             <ErrorMessage name="street" />
 
-            <Field name="streetNo" label="Nr budynku" placeholder="Nr budynku" class="border rounded py-1 px-2 mb-2"/>
+            <Field 
+                name="streetNo" 
+                label="Nr budynku" 
+                placeholder="Nr budynku" 
+                class="border rounded py-1 px-2 mb-2"
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'
+            />
             <ErrorMessage name="streetNo" />
 
-            <Field name="flatNo" label="Nr mieszkania" placeholder="Nr mieszkania" class="border rounded py-1 px-2 mb-2"/>
+            <Field 
+                name="flatNo" 
+                label="Nr mieszkania" 
+                placeholder="Nr mieszkania" 
+                class="border rounded py-1 px-2 mb-2"
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'
+            />
             <ErrorMessage name="flatNo" />
 
-            <Field name="postalCode" label="Kod pocztowy" placeholder="Kod pocztowy" class="border rounded py-1 px-2 mb-2"/>
+            <Field 
+                name="postalCode" 
+                label="Kod pocztowy" 
+                placeholder="Kod pocztowy" 
+                class="border rounded py-1 px-2 mb-2"
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'
+            />
             <ErrorMessage name="postalCode" />
 
-            <Field name="city" label="Miasto" placeholder="Miasto" class="border rounded py-1 px-2 mb-2"/>
+            <Field 
+                name="city" 
+                label="Miasto" 
+                placeholder="Miasto" 
+                class="border rounded py-1 px-2 mb-2"
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'
+            />
             <ErrorMessage name="city" />
 
-            <Field name="phone" label="Telefon" placeholder="Telefon" class="border rounded py-1 px-2 mb-2"/>
+            <Field 
+                name="phone" 
+                label="Telefon" 
+                placeholder="Telefon" 
+                class="border rounded py-1 px-2 mb-2"
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'
+            />
             <ErrorMessage name="phone" />
 
-            <Field name="email" label="Adres e-mail" placeholder="Adres e-mail" class="border rounded py-1 px-2 mb-2"/>
-            <ErrorMessage name="email" />
-            
-            <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100">Wyślij</button>
-        </Form>  
+            <Field 
+                name="email" 
+                label="Adres e-mail" 
+                placeholder="Adres e-mail" 
+                class="border rounded py-1 px-2 mb-2"
+                :class='{ 
+                    "pointer-events-none": this.isFieldDisabled === true, 
+                    "text-gray-400": this.isFieldDisabled === true 
+                }'
+            />
+            <ErrorMessage name="email" /> 
 
+            <button ref="send" hidden></button>
+        </Form>
     </div>
 </template>
 
@@ -75,11 +156,14 @@ export default {
             postalCode: 'required|regex:[0-9]{2}-[0-9]{3}',
             city: 'required|alpha_spaces',
             phone: 'required|digits:9',
-            email: 'required|email'
+            email: 'required|email',
         };
 
         return {
+            heading: "Dane zamawiającego",
+            send: "",
             schema,
+            isFieldDisabled: "",
         };
     },
     components: {
@@ -88,9 +172,39 @@ export default {
         ErrorMessage
     },
     methods: {
-        submit(values) {
+        submitForm(values) {
             alert(JSON.stringify(values, null, 2));
+            this.eventBus.emit("validForm");
         },
-    }
-}
+        validateForm() {
+            this.send.click();
+        },
+        onInvalidSubmit({ results }) {
+            //console.log(results); // a detailed map of field names and their validation results
+            let fields = []; 
+            for(const val in results){
+                fields.push(results[val].valid)
+            }
+            let invalid = [];
+            invalid = fields.filter(function(val){ return val === false });
+            console.log("invalid: " + invalid.length);
+            if(invalid.length > 0){
+                this.eventBus.emit("invalidForm");
+                console.log("emitted");
+            }
+        },
+        disableForm() {
+            this.isFieldDisabled = true;
+        },
+        enableForm() {
+            this.isFieldDisabled = false;
+        }
+    },
+    mounted(){
+        this.send = this.$refs.send;
+        this.eventBus.on("submit", this.validateForm);
+        this.eventBus.on("disableForm", this.disableForm);
+        this.eventBus.on("enableForm", this.enableForm);
+    },
+}   
 </script>
