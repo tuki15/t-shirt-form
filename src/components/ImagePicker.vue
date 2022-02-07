@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col items-center">
         <h1 class="text-2xl font-bold mb-8">Wybierz zdjęcie</h1>
-        <img class="mb-4 rounded w-96" :src="preview">
+        <img class="mb-4 rounded w-96" :src="preview" :class=' loading === true ? ["bg-gray-400","opacity-50"] : ""'>
         <div>
             <button class="bg-blue-500 mx-1 p-2 rounded text-white w-24 hover:bg-blue-600" @click.prevent="PrevImg()">Poprzedni</button>
             <button class="bg-blue-500 mx-1 p-2 rounded text-white w-30 hover:bg-blue-600" @click.prevent="DrawNextImg()">Losuj kolejny</button>
@@ -14,7 +14,8 @@
 export default {
     name: "ImagePicker",
     props: {
-        preview: String
+        preview: String,
+        loading: Boolean
     },
     methods: {
         DrawNextImg() {

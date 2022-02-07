@@ -2,18 +2,18 @@
     <div class="container mx-auto">
         <div class="bg-white flex flex-wrap mx-auto p-12 border-1 rounded-lg shadow-md w-4/5">
             <div class="w-1/2">
-                <preview :src='src !="" ? src : src = src = ""' :alt="alt" @previmg="prevImg()"/>
+                <preview :src='src !="" ? src : src = src = ""' :alt="alt" @previmg="prevImg()" :loading="loading"/>
             </div>
             <div class="w-1/2">
                 <form>
                     <keep-alive>
-                        <component :is="view" :step="step" :preview="src"/>
+                        <component :is="view" :step="step" :preview="src" :loading="loading"/>
                     </keep-alive>
                 </form>  
             </div>
             <div class="flex justify-between pt-8 w-full">
                 <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(-1); this.disableNext = false;" :disabled="this.step === 0">Wstecz</button>
-                <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(1)" :disabled="this.step === 4" type="submit">Dalej</button>
+                <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(1)" :disabled="this.step === 4">Dalej</button>
             </div>
         </div>
     </div>
@@ -25,6 +25,7 @@ import SidePicker from './SidePicker.vue';
 import ImagePicker from './ImagePicker.vue';
 import AddressForm from './AddressForm.vue';
 import Preview from './Preview.vue';
+import ThankYou from './ThankYou.vue';
 
 export default {
     name: 'Order',
@@ -36,7 +37,8 @@ export default {
             src1: "",
             src2: "",
             alt: "Przód",
-            isFormValid: false
+            isFormValid: false,
+            loading: false,
         }
     },
     components: {
@@ -44,6 +46,7 @@ export default {
         "image-picker": ImagePicker,
         "address-form": AddressForm,
         "preview": Preview,
+        "thank-you": ThankYou
     },
     methods: {
         changeView() {
@@ -52,21 +55,23 @@ export default {
             } else if(this.step === 1) {
                 this.view = "image-picker"
             } else if(this.step === 2) {
-                this.view = "address-form"
+                this.view = "address-form";
                 this.eventBus.emit("enableForm");
             } else if(this.step === 3) {
                 this.eventBus.emit("disableForm");  
+            } else if(this.step === 4) {
+                this.view = "thank-you";
             }
         },
         changeStep(dir) {
-            if(this.step === 2){
+            if(this.step === 2 && dir > 0){
                 this.eventBus.emit("submit");
 
                 setTimeout(() => {
                     if(this.isFormValid === false){
                         console.log("disabled");
                     } else {
-                        this.step++;
+                        this.step += dir;
                         console.log(this.step);
                         this.changeView();
                     }
@@ -80,14 +85,16 @@ export default {
         changeSide(side) {
             this.alt = side;
         },
-        getRandomIntInclusive(min, max) {
+        getRandomInt(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min + 1)) + min;
         },
         drawImage() {
-            let img = "https://picsum.photos/id/"+ this.getRandomIntInclusive(1,1000) +"/400";
-            this.eventBus.emit("src", img);
+            let img = "https://picsum.photos/id/"+ this.getRandomInt(1,1000) +"/400";
+            this.preload(img).then(() => {
+                this.loading = false;
+            });
             return img;
         },
         prevImg() {
@@ -106,11 +113,27 @@ export default {
         },
         formValid() {
             this.isFormValid = true;
+        },
+        preload(url) {
+
+            const img = document.createElement("img");
+
+            this.loading = true;
+            const p = new Promise(function(resolve, reject){
+                img.onload = () => resolve(url);
+                img.onerror = () => reject(() => { 
+                        console.log("reject");
+                        //this.drawImage(this.src);
+                });
+            });
+            img.src = url;
+            console.log("src: " + img.src);
+            return p;
         }
     },
     mounted() {
         this.eventBus.on("side", this.changeSide);
-        this.src = this.drawImage(this.src);
+        this.src = this.drawImage();                    //ale drawImage nie przyjmuje parametrów o.O
         this.eventBus.on("prev-img", this.prevImg);
         this.eventBus.on("draw-next-img", this.drawNextImg)
         this.eventBus.on("next-img", this.nextImg)

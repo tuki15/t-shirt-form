@@ -180,7 +180,6 @@ export default {
             this.send.click();
         },
         onInvalidSubmit({ results }) {
-            //console.log(results); // a detailed map of field names and their validation results
             let fields = []; 
             for(const val in results){
                 fields.push(results[val].valid)
@@ -198,6 +197,7 @@ export default {
         },
         enableForm() {
             this.isFieldDisabled = false;
+            console.log(this.isFieldDisabled);
         }
     },
     mounted(){
