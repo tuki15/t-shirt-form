@@ -173,8 +173,11 @@ export default {
     },
     methods: {
         submitForm(values) {
-            alert(JSON.stringify(values, null, 2));
+            let x = values;
+            //alert(x);
+            console.log(values);
             this.eventBus.emit("validForm");
+            this.eventBus.emit("formData", x)
         },
         validateForm() {
             this.send.click();

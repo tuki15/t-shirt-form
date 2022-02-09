@@ -2,17 +2,18 @@
     <div class="container mx-auto">
         <div class="bg-white flex flex-wrap mx-auto p-12 border-1 rounded-lg shadow-md w-4/5">
             <div class="w-1/2">
-                <preview :src='src !="" ? src : src = src = ""' :alt="alt" @previmg="prevImg()" :loading="loading"/>
+                <preview :src='src !="" ? src + filters : src = src = ""' :alt="alt" @previmg="prevImg()" :loading="loading"/>
             </div>
             <div class="w-1/2">
                 <form>
                     <keep-alive>
-                        <component :is="view" :step="step" :preview="src" :loading="loading"/>
+                        <component :is="view" :step="step" :preview="src + filters" :loading="loading"/>
                     </keep-alive>
                 </form>  
             </div>
             <div class="flex justify-between pt-8 w-full">
                 <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(-1); this.disableNext = false;" :disabled="this.step === 0">Wstecz</button>
+                <h3>Cena: {{ price = sidesPrice + grayscalePrice + blurPrice }}</h3>
                 <button class="bg-blue-500 p-2 rounded text-white w-20 hover:bg-blue-600 disabled:bg-blue-100" @click.prevent="changeStep(1)" :disabled="this.step === 4">Dalej</button>
             </div>
         </div>
@@ -39,6 +40,15 @@ export default {
             alt: "Przód",
             isFormValid: false,
             loading: false,
+            filters: "",
+            grayscale: "",
+            blur: "",
+            blurVal: "=1",
+            price: 10,
+            sidesPrice: 10,
+            grayscalePrice: 0,
+            blurPrice: 0,
+
         }
     },
     components: {
@@ -83,15 +93,14 @@ export default {
             }           
         },
         changeSide(side) {
+            side === "Obustronnie" ? this.sidesPrice = 20 : this.sidesPrice = 10; 
             this.alt = side;
         },
-        getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        },
+
         drawImage() {
-            let img = "https://picsum.photos/id/"+ this.getRandomInt(1,1000) +"/400";
+            let rand = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 4);
+
+            let img = "https://picsum.photos/seed/"+ rand +"/400";
             this.preload(img).then(() => {
                 this.loading = false;
             });
@@ -129,16 +138,77 @@ export default {
             img.src = url;
             console.log("src: " + img.src);
             return p;
-        }
+        },
+        addFilters() {
+
+            let prefix;
+            let prefix2;
+            this.grayscale === "" ? prefix = "" : prefix = "?";
+            if(prefix === ""){
+                prefix2 = "?";
+            } else {
+                prefix2 = "&";
+            }
+
+            let filter = prefix + this.grayscale + prefix2 + this.blur + this.blurVal;
+            this.preload(this.src + filter).then(() => {
+                this.loading = false;
+            });
+
+            this.filters = filter;
+        },
+        toggleGrayscale() {
+            if(this.grayscale === "") {
+                this.grayscale = "grayscale";
+                this.grayscalePrice = 2;
+                console.log(this.src);
+            } else {
+                this.grayscale = "";
+                this.grayscalePrice = 0 ;
+                console.log(this.src);
+            }
+            this.addFilters();
+        },
+        toggleBlur() {
+            if (this.blur === "") {
+                this.blur = "blur";
+                this.blurPrice = 3;
+            } else {
+                this.blur = "";
+                this.blurPrice = 0;
+                this.changeBlur();
+            }
+            console.log(this.grayscale);
+            console.log(this.blur);
+            this.addFilters();
+        },
+        changeBlur(val) {
+            if (this.blur === ""){
+                this.blurVal = "";
+            } else {
+                this.blurVal = "=" + val;
+                console.log(this.blurVal);
+                this.addFilters();
+            }
+        },
+        orderData(obj) {
+            obj.price = this.price;
+            console.log(obj);
+        },
+
     },
     mounted() {
         this.eventBus.on("side", this.changeSide);
-        this.src = this.drawImage();                    //ale drawImage nie przyjmuje parametrów o.O
+        this.src = this.drawImage();
         this.eventBus.on("prev-img", this.prevImg);
         this.eventBus.on("draw-next-img", this.drawNextImg)
         this.eventBus.on("next-img", this.nextImg)
+        this.eventBus.on("toggle-grayscale", this.toggleGrayscale);
+        this.eventBus.on("toggle-blur", this.toggleBlur);
+        this.eventBus.on("blur", this.changeBlur);
         this.eventBus.on("invalidForm", this.formInvalid);
         this.eventBus.on("validForm", this.formValid);
+        this.eventBus.on("formData", this.orderData);
     }
 }
 </script>
