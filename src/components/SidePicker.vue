@@ -11,9 +11,9 @@
             ease-in-out
             m-0
             focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none">
-            <option>Przód</option>
-            <option>Tył</option>
-            <option>Obustronnie</option>
+            <option>przód</option>
+            <option>tył</option>
+            <option>obustronnie</option>
         </select>
     </div>
 </template>
