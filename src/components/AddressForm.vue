@@ -5,10 +5,11 @@
             <div
                 v-for="(field, index) in schema.fields"
                 :key="field.name"
+                class="mb-2 max-w-full"
             >
                 <label :for="field.name">{{ field.label }}</label>
                 <br>
-                <div class="flex mb-2">
+                <div class="flex">
                     <Field 
                         :as="field.as" 
                         :id="field.name" 
@@ -16,22 +17,20 @@
                         :label="field.label" 
                         :type="field.type" 
                         :placeholder="field.placeholder" 
-                        :rules="field.rules" 
+                        :rules="field.rules"
                         class="border rounded py-1 px-2" 
-                        :class=' field.active === false ? ["bg-gray-200","pointer-events-none"] : ""'
+                        :class=' field.active === false ? ["bg-gray-200","pointer-events-none", "input-editable"] : "w-full"'
                     />
                     <button v-if="this.enableEdit" class="bg-blue-500 p-2 rounded hover:bg-blue-600 ml-2" @click.prevent='this.eventBus.emit("fieldIndex", index)'>
                         <PencilIcon v-if="field.active === false" class="h-5 w-5 text-white"/>
                         <CheckIcon v-if="field.active === true" class="h-5 w-5 text-white"/>
                     </button>
                 </div>
-                <br>
-                <ErrorMessage :name="field.name" />
-                <br>
+                <ErrorMessage :name="field.name" class="text-red-500"/>
 
             </div>
                 <div v-if="this.enableEdit">
-                    <h2>Dodatkowe opcje</h2>
+                    <h2 class="text-xl mb-2 mt-6">Dodatkowe opcje</h2>
                     <span>Zadruk: {{ this.order.side }}</span><br>
                     <span>Skala szarości: {{ grayscale }}</span><br>
                     <span>Rozmycie: {{ blurVal }}</span><br>

@@ -10,18 +10,18 @@
                 </svg>
             </div>
         </div>
-        <div>
-            <button class="bg-blue-500 mx-1 p-2 rounded text-white w-24 hover:bg-blue-600" @click.prevent="prevImg()">Poprzedni</button>
-            <button class="bg-blue-500 mx-1 p-2 rounded text-white w-30 hover:bg-blue-600" @click.prevent="drawNextImg()">Losuj kolejny</button>
-            <button class="bg-blue-500 mx-1 p-2 rounded text-white w-24 hover:bg-blue-600" @click.prevent="nextImg()">Kolejny</button>
+        <div class="mb-8 flex flex-col items-center xl:block">
+            <button class="bg-blue-500 m-1 p-2 rounded text-white w-24 hover:bg-blue-600" @click.prevent="prevImg()">Poprzedni</button>
+            <button class="bg-blue-500 m-1 p-2 rounded text-white w-30 hover:bg-blue-600" @click.prevent="drawNextImg()">Losuj kolejny</button>
+            <button class="bg-blue-500 m-1 p-2 rounded text-white w-24 hover:bg-blue-600" @click.prevent="nextImg()">Kolejny</button>
         </div>
         <div>
-            <h2 class="text-center">Dodaj efekt</h2>
+            <h2 class="text-center text-xl mb-2">Dodaj efekt:</h2>
             <input type="checkbox" id="grayscale" @change="toggleGrayscale()">
-            <label for="grayscale">Skala szarości</label>
+            <label for="grayscale" class="ml-2">Skala szarości</label>
             <br>
             <input type="checkbox" id="blur" @change="toggleBlur()">
-            <label for="blur">Rozmycie</label>
+            <label for="blur" class="ml-2">Rozmycie</label>
             <br>
             <input type="range" id="blurVal" v-if="blur === true" v-model="blurVal" min="1" max="10" step="1" @change="changeBlur()">
             <br>

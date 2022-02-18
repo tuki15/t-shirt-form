@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen py-20 mx-auto bg-gray-50">
+    <div class="h-full px-4 py-12 mx-auto bg-gray-50">
       <order/>
   </div>
 </template>

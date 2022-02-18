@@ -1,13 +1,13 @@
 <template>
     <div class="container mx-auto">
-        <div class="bg-white flex flex-wrap mx-auto p-12 border-1 rounded-lg shadow-md w-4/5">
+        <div class="bg-white flex flex-wrap mx-auto p-6 md:p-12 border-1 rounded-lg shadow-md w-full lg:w-4/5">
             <div class="w-full bg-gray-300 rounded-md mb-8">
-                <div class="bg-blue-400 h-2 rounded-md" :style="{ 'width': 'calc('+ (step + 1) +' * 100% / 6 )' }"></div>
+                <div class="bg-blue-400 h-1 rounded-md" :style="{ 'width': 'calc('+ (step) +' * 100% / 5 )' }"></div>
             </div>
-            <div class="w-1/2">
+            <div class="w-full md:w-1/2">
                 <preview :src='src !="" ? src + filters : src = src = ""' :alt="side" @previmg="prevImg()" :loading="loading"/>
             </div>
-            <div class="w-1/2">
+            <div class="w-full md:w-1/2 px-4 lg:px-8">
                 <form>
                     <keep-alive>
                         <component :is="view" :step="step" :preview="src + filters" :loading="loading" :schema="formSchema" :order="order"/>
@@ -85,7 +85,7 @@ export default {
                 {
                     label: 'Kod pocztowy',
                     name: 'postalCode',
-                    placeholder: 'Kod pocztowy',
+                    placeholder: 'Kod pocztowy w formacie 00-000',
                     as: 'input',
                     type: 'text',
                     rules: 'required|regex:[0-9]{2}-[0-9]{3}',
@@ -167,6 +167,7 @@ export default {
                 this.view = "delivery";
             } else if(this.step === 5) {
                 this.view = "thank-you";
+                console.log(this.order);
             } 
         },
         changeStep(dir) {
@@ -287,7 +288,6 @@ export default {
             obj.effect2 = this.blurVal;
             obj.delivery = this.delivery;
             this.order = obj;
-            console.log(this.order);
         },
         toggleFormActive(bool) {
             this.eventBus.emit("isFormActive", bool)
@@ -304,6 +304,7 @@ export default {
         deliveryData(obj) {
             this.delivery = obj;
             this.delivery === "courier" ? this.deliveryPrice = 15 : this.deliveryPrice = 0;
+            console.log(this.order);
         }
 
     },
